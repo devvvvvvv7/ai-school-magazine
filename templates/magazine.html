@@ -42,7 +42,7 @@ button:hover{
 background:#0ea5e9;
 }
 
-/* Manual editor */
+/* Manual fallback editor */
 
 .manual-box{
 background:#1e293b;
@@ -140,7 +140,7 @@ font-size:15px;
 text-align:justify;
 }
 
-/* Contact section */
+/* Contact */
 
 .contact{
 margin-top:30px;
@@ -186,6 +186,26 @@ white 6px
 );
 }
 
+/* Editor */
+
+.editor{
+display:none;
+background:#1e293b;
+padding:20px;
+border-radius:8px;
+margin-top:20px;
+}
+
+.editor input,
+.editor textarea{
+width:100%;
+padding:10px;
+margin-top:8px;
+border:none;
+border-radius:6px;
+font-family:'Poppins',sans-serif;
+}
+
 </style>
 
 </head>
@@ -226,9 +246,7 @@ white 6px
 <div class="header">
 
 <div class="school-area">
-<div class="school-name">
-SANMATI HIGHER SECONDARY SCHOOL
-</div>
+<div class="school-name">SANMATI HIGHER SECONDARY SCHOOL</div>
 <div class="school-line"></div>
 </div>
 
@@ -244,14 +262,34 @@ SANMATI HIGHER SECONDARY SCHOOL
 
 <h2>{{title}}</h2>
 
-<div class="article">
-{{article}}
+<div class="article">{{article}}</div>
+
+<button class="edit-btn" onclick="toggleEditor()">Edit Content</button>
+
+<div class="editor" id="editorBox">
+
+<form action="/manual" method="POST">
+
+<label>Title</label> <input type="text" name="title" value="{{title}}">
+
+<label>Article</label>
+
+<textarea name="article" rows="6">{{article}}</textarea>
+
+{% for img in images %} <input type="hidden" name="images" value="{{img}}">
+{% endfor %}
+
+<br><br>
+
+<button type="submit">Update Magazine</button>
+
+</form>
+
 </div>
 
 <div class="contact">
 
 <div><strong>Email:</strong> mail.sanmatischool@gmail.com</div>
-
 <div><strong>Contact:</strong> 0731-3540000 / 8959289398</div>
 
 <div class="instagram">
@@ -270,7 +308,45 @@ SANMATI HIGHER SECONDARY SCHOOL
 
 <script>
 
+function toggleEditor(){
+
+const box=document.getElementById("editorBox");
+
+if(box.style.display==="none" || box.style.display===""){
+box.style.display="block";
+}else{
+box.style.display="none";
+}
+
+}
+
+function hideUI(){
+
+document.querySelector(".buttons").style.display="none";
+
+const editBtn=document.querySelector(".edit-btn");
+
+if(editBtn){
+editBtn.style.display="none";
+}
+
+}
+
+function showUI(){
+
+document.querySelector(".buttons").style.display="block";
+
+const editBtn=document.querySelector(".edit-btn");
+
+if(editBtn){
+editBtn.style.display="block";
+}
+
+}
+
 function downloadPDF(){
+
+hideUI();
 
 const element=document.getElementById("magazineCard");
 
@@ -282,11 +358,15 @@ html2canvas:{scale:4,useCORS:true},
 jsPDF:{unit:'px',format:[794,1123],orientation:'portrait'}
 };
 
-html2pdf().set(opt).from(element).save();
+html2pdf().set(opt).from(element).save().then(()=>{
+showUI();
+});
 
 }
 
 function downloadImage(){
+
+hideUI();
 
 const element=document.getElementById("magazineCard");
 
@@ -298,8 +378,12 @@ useCORS:true
 let link=document.createElement("a");
 
 link.download="sanmati_magazine.png";
+
 link.href=canvas.toDataURL("image/png",1);
+
 link.click();
+
+showUI();
 
 });
 
