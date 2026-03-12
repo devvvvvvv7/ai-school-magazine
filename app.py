@@ -11,8 +11,8 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 # Gemini setup
 API_KEY = os.environ.get("GEMINI_API_KEY")
-
 client = genai.Client(api_key=API_KEY)
+
 
 @app.route("/")
 def home():
@@ -50,11 +50,15 @@ Format exactly like this:
 Title: <creative title>
 
 Article:
-Write 120-150 words describing the event, atmosphere, participation,
-and why it was important for the school.
+Write 120-150 words describing the event atmosphere,
+student participation and why it was important for the school.
 """
 
     contents = [prompt] + images_for_ai
+
+    ai_failed = False
+    title = ""
+    article = ""
 
     try:
 
@@ -65,28 +69,38 @@ and why it was important for the school.
 
         ai_text = response.text
 
+        if "Title:" in ai_text and "Article:" in ai_text:
+            title = ai_text.split("Title:")[1].split("Article:")[0].strip()
+            article = ai_text.split("Article:")[1].strip()
+
     except Exception as e:
 
-        ai_text = "AI service temporarily unavailable. Please try again later."
-
-    title = ""
-    article = ""
-
-    if "Title:" in ai_text and "Article:" in ai_text:
-        title = ai_text.split("Title:")[1].split("Article:")[0].strip()
-        article = ai_text.split("Article:")[1].strip()
-    else:
-        article = ai_text
+        ai_failed = True
 
     return render_template(
         "magazine.html",
         title=title,
         article=article,
-        images=image_paths
+        images=image_paths,
+        ai_failed=ai_failed
+    )
+
+
+@app.route("/manual", methods=["POST"])
+def manual():
+
+    title = request.form.get("title")
+    article = request.form.get("article")
+    images = request.form.getlist("images")
+
+    return render_template(
+        "magazine.html",
+        title=title,
+        article=article,
+        images=images,
+        ai_failed=False
     )
 
 
 if __name__ == "__main__":
-
     app.run(host="0.0.0.0", port=10000)
-
