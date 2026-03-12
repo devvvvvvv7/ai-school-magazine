@@ -10,8 +10,9 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 # Gemini setup
-client = genai.Client(api_key="AIzaSyDTCqkRijrG70aWq19WR9yB4UP0s-Ruvv4")
+API_KEY = os.environ.get("GEMINI_API_KEY")
 
+client = genai.Client(api_key=API_KEY)
 
 @app.route("/")
 def home():
@@ -88,3 +89,4 @@ and why it was important for the school.
 if __name__ == "__main__":
 
     app.run(host="0.0.0.0", port=10000)
+
