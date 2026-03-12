@@ -10,8 +10,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 # Gemini setup
-API_KEY = os.environ.get("GEMINI_API_KEY")
-client = genai.Client(api_key=API_KEY)
+client = genai.Client(api_key="AIzaSyDwTMgqlPSlyoXgDL7FH_9cC5v_46TlZpQ")
 
 
 @app.route("/")
@@ -39,19 +38,26 @@ def generate():
             images_for_ai.append(img)
 
     prompt = f"""
-You are a professional school magazine writer.
+Write a school magazine article in simple English.
 
-Write a magazine article about the following event.
+Event description: {hint}
 
-Event: {hint}
+Rules:
+- Use simple language suitable for school students.
+- Do NOT invent names or titles.
+- Use the names exactly as given in the event description.
+- Avoid difficult vocabulary.
+- Write in clear paragraphs.
 
-Format exactly like this:
+Format strictly like this:
 
-Title: <creative title>
+Title: A short and clear title related to the event.
 
 Article:
-Write 120-150 words describing the event atmosphere,
-student participation and why it was important for the school.
+Write 100–120 words in 2 small paragraphs describing:
+- what happened in the event
+- student participation
+- message of the event
 """
 
     contents = [prompt] + images_for_ai
@@ -103,4 +109,4 @@ def manual():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    app.run(debug=True)
