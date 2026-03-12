@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>School Magazine</title>  
+<title>School Magazine</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
 
@@ -40,6 +40,28 @@ font-size:14px;
 
 button:hover{
 background:#0ea5e9;
+}
+
+/* Manual editor */
+
+.manual-box{
+background:#1e293b;
+color:white;
+padding:20px;
+border-radius:8px;
+margin-bottom:20px;
+width:794px;
+}
+
+.manual-box input,
+.manual-box textarea{
+width:100%;
+padding:10px;
+margin-top:8px;
+margin-bottom:10px;
+border-radius:6px;
+border:none;
+font-family:'Poppins',sans-serif;
 }
 
 /* A4 magazine layout */
@@ -84,6 +106,7 @@ background:linear-gradient(90deg,#38bdf8,#6366f1);
 margin-top:8px;
 border-radius:4px;
 }
+
 .logo{
 width:70px;
 }
@@ -169,6 +192,30 @@ white 6px
 
 <body>
 
+{% if ai_failed %}
+
+<div class="manual-box">
+
+<h3>AI service unavailable</h3>
+<p>You can enter the content manually.</p>
+
+<form action="/manual" method="POST">
+
+<input type="text" name="title" placeholder="Enter Title">
+
+<textarea name="article" rows="6" placeholder="Write article here..."></textarea>
+
+{% for img in images %} <input type="hidden" name="images" value="{{img}}">
+{% endfor %}
+
+<button type="submit">Generate Magazine</button>
+
+</form>
+
+</div>
+
+{% endif %}
+
 <div class="buttons">
 <button onclick="downloadPDF()">Download PDF</button>
 <button onclick="downloadImage()">Download Image</button>
@@ -179,13 +226,10 @@ white 6px
 <div class="header">
 
 <div class="school-area">
-
 <div class="school-name">
 SANMATI HIGHER SECONDARY SCHOOL
 </div>
-
 <div class="school-line"></div>
-
 </div>
 
 <img src="/static/logo.png" class="logo">
@@ -254,9 +298,7 @@ useCORS:true
 let link=document.createElement("a");
 
 link.download="sanmati_magazine.png";
-
 link.href=canvas.toDataURL("image/png",1);
-
 link.click();
 
 });
