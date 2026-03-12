@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+<title>School Magazine</title>  
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+
+body{
+background:#0f172a;
+display:flex;
+flex-direction:column;
+align-items:center;
+padding:40px;
+font-family:'Poppins',sans-serif;
+margin:0;
+}
+
+.buttons{
+margin-bottom:20px;
+}
+
+button{
+padding:10px 18px;
+margin-right:10px;
+background:#38bdf8;
+border:none;
+border-radius:6px;
+color:white;
+cursor:pointer;
+font-size:14px;
+}
+
+button:hover{
+background:#0ea5e9;
+}
+
+/* A4 magazine layout */
+
+.magazine{
+width:794px;
+min-height:1123px;
+background:#6b7a99;
+padding:40px;
+border-radius:10px;
+color:white;
+box-shadow:0 10px 25px rgba(0,0,0,0.4);
+box-sizing:border-box;
+}
+
+/* Header */
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.school-area{
+display:flex;
+flex-direction:column;
+}
+
+.school-name{
+font-size:34px;
+font-weight:700;
+letter-spacing:3px;
+color:#ffffff;
+text-transform:uppercase;
+}
+
+.school-line{
+width:260px;
+height:4px;
+background:linear-gradient(90deg,#38bdf8,#6366f1);
+margin-top:8px;
+border-radius:4px;
+}
+.logo{
+width:70px;
+}
+
+/* Image */
+
+.image-box{
+border-radius:12px;
+overflow:hidden;
+border:4px solid white;
+margin-bottom:15px;
+}
+
+.image-box img{
+width:100%;
+height:auto;
+display:block;
+}
+
+/* Article */
+
+h2{
+margin-top:10px;
+font-size:22px;
+}
+
+.article{
+margin-top:10px;
+line-height:1.7;
+font-size:15px;
+text-align:justify;
+}
+
+/* Contact section */
+
+.contact{
+margin-top:30px;
+border-top:1px solid rgba(255,255,255,0.4);
+padding-top:15px;
+font-size:14px;
+}
+
+.contact div{
+margin-top:5px;
+}
+
+.instagram{
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+.insta-logo{
+width:16px;
+}
+
+/* Footer */
+
+.footer{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-top:25px;
+font-size:12px;
+opacity:0.9;
+}
+
+.barcode{
+height:35px;
+width:110px;
+background: repeating-linear-gradient(
+90deg,
+black,
+black 3px,
+white 3px,
+white 6px
+);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="buttons">
+<button onclick="downloadPDF()">Download PDF</button>
+<button onclick="downloadImage()">Download Image</button>
+</div>
+
+<div class="magazine" id="magazineCard">
+
+<div class="header">
+
+<div class="school-area">
+
+<div class="school-name">
+SANMATI HIGHER SECONDARY SCHOOL
+</div>
+
+<div class="school-line"></div>
+
+</div>
+
+<img src="/static/logo.png" class="logo">
+
+</div>
+
+<div class="image-box">
+{% if images %}
+<img src="{{images[0]}}">
+{% endif %}
+</div>
+
+<h2>{{title}}</h2>
+
+<div class="article">
+{{article}}
+</div>
+
+<div class="contact">
+
+<div><strong>Email:</strong> mail.sanmatischool@gmail.com</div>
+
+<div><strong>Contact:</strong> 0731-3540000 / 8959289398</div>
+
+<div class="instagram">
+<img src="/static/instagram.png" class="insta-logo">
+<span><strong>Instagram:</strong> @sanmati.official</span>
+</div>
+
+</div>
+
+<div class="footer">
+<div>Official School Magazine</div>
+<div class="barcode"></div>
+</div>
+
+</div>
+
+<script>
+
+function downloadPDF(){
+
+const element=document.getElementById("magazineCard");
+
+const opt={
+margin:0,
+filename:'sanmati_magazine.pdf',
+image:{type:'jpeg',quality:1},
+html2canvas:{scale:4,useCORS:true},
+jsPDF:{unit:'px',format:[794,1123],orientation:'portrait'}
+};
+
+html2pdf().set(opt).from(element).save();
+
+}
+
+function downloadImage(){
+
+const element=document.getElementById("magazineCard");
+
+html2canvas(element,{
+scale:4,
+useCORS:true
+}).then(canvas=>{
+
+let link=document.createElement("a");
+
+link.download="sanmati_magazine.png";
+
+link.href=canvas.toDataURL("image/png",1);
+
+link.click();
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
